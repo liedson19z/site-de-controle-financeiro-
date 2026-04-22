@@ -1,0 +1,88 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: system-ui, Arial, sans-serif;
+}
+
+body {
+    background: #0b0b10;
+    color: #fff;
+}
+
+/* HEADER */
+.header {
+    padding: 20px;
+    font-size: 18px;
+    font-weight: 600;
+}
+
+/* CARD */
+.card {
+    background: #1e1e1e;
+    margin: 15px;
+    padding: 20px;
+    border-radius: 14px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.4);
+}
+
+/* BOTÕES */
+button {
+    padding: 10px 15px;
+    border: none;
+    border-radius: 8px;
+    background: #00c3ff;
+    color: black;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+/* LINKS */
+a {
+    color: #00c3ff;
+    text-decoration: none;
+}
+
+/* TABELA */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+}
+
+th, td {
+    padding: 12px;
+    text-align: center;
+}
+
+th {
+    background: #222;
+}
+
+td {
+    border-bottom: 1px solid #222;
+}
+
+/* CORES FINANCEIRAS */
+.entrada {
+    color: #00ff88;
+}
+
+.saida {
+    color: #ff4d4d;
+}
+
+/* BOTÃO FLUTUANTE */
+.fab {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: #00c3ff;
+    border: none;
+    font-size: 28px;
+    cursor: pointer;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.4);
+}

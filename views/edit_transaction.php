@@ -2,98 +2,82 @@
 session_start();
 
 if (!isset($_SESSION['user_id'])) {
-    header("Location: /site/views/login.php");
+    header("Location: login.php");
     exit;
 }
 
 require_once "../config/database.php";
 
-$id = $_GET['id'];
-$user_id = $_SESSION['user_id'];
-
 $database = new Database();
 $conn = $database->connect();
 
-$sql = "SELECT * FROM transactions WHERE id = :id AND user_id = :user_id";
-$stmt = $conn->prepare($sql);
+$id = $_GET['id'] ?? null;
+
+if (!$id) {
+    header("Location: dashboard.php");
+    exit;
+}
+
+$stmt = $conn->prepare("SELECT * FROM transactions WHERE id = :id");
 $stmt->bindParam(":id", $id);
-$stmt->bindParam(":user_id", $user_id);
 $stmt->execute();
 
-$transaction = $stmt->fetch(PDO::FETCH_ASSOC);
+$t = $stmt->fetch(PDO::FETCH_ASSOC);
+
+if (!$t) {
+    header("Location: dashboard.php");
+    exit;
+}
+
+$title = "Editar Transação";
+
+ob_start();
 ?>
 
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Editar Transação</title>
+<div class="form-container">
 
-    <style>
-        body {
-            font-family: Arial;
-            background: #121212;
-            color: white;
-            margin: 0;
-            padding: 20px;
-        }
+    <h2 class="form-title">✏️ Editar Transação</h2>
 
-        .container {
-            max-width: 400px;
-            margin: auto;
-            background: #1e1e1e;
-            padding: 20px;
-            border-radius: 10px;
-        }
+    <a href="/site/views/dashboard.php" style="
+        display:inline-block;
+        margin-bottom:15px;
+        color:#00c3ff;
+        text-decoration:none;
+    ">
+        ← Voltar para o Dashboard
+    </a>
 
-        input, select {
-            width: 100%;
-            padding: 10px;
-            margin-bottom: 15px;
-            border: none;
-            border-radius: 5px;
-        }
+    <form method="POST" action="/site/controllers/updateTransaction.php">
 
-        button {
-            width: 100%;
-            padding: 10px;
-            background: #00c3ff;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-        }
+        <input type="hidden" name="id" value="<?php echo $t['id']; ?>">
 
-        a {
-            color: #00c3ff;
-            text-decoration: none;
-        }
-    </style>
-</head>
-<body>
+        <label>Tipo</label>
+        <select name="tipo" required>
+            <option value="entrada" <?php if ($t['tipo'] == 'entrada') echo 'selected'; ?>>
+                Entrada
+            </option>
 
-<h2>Editar Transação</h2>
+            <option value="saida" <?php if ($t['tipo'] == 'saida') echo 'selected'; ?>>
+                Saída
+            </option>
+        </select>
 
-<div class="container">
-<form method="POST" action="/site/controllers/updateTransaction.php">
+        <label>Valor</label>
+        <input type="number" name="valor" step="0.01" value="<?php echo $t['valor']; ?>" required>
 
-    <input type="hidden" name="id" value="<?php echo $transaction['id']; ?>">
+        <label>Categoria</label>
+        <input type="text" name="categoria" value="<?php echo $t['categoria']; ?>" required>
 
-    <select name="tipo">
-        <option value="entrada" <?php if($transaction['tipo']=="entrada") echo "selected"; ?>>Entrada</option>
-        <option value="saida" <?php if($transaction['tipo']=="saida") echo "selected"; ?>>Saída</option>
-    </select>
+        <label>Descrição</label>
+        <input type="text" name="descricao" value="<?php echo $t['descricao']; ?>">
 
-    <input type="number" step="0.01" name="valor" value="<?php echo $transaction['valor']; ?>">
+        <button type="submit">Atualizar</button>
 
-    <input type="text" name="categoria" value="<?php echo $transaction['categoria']; ?>">
+    </form>
 
-    <input type="text" name="descricao" value="<?php echo $transaction['descricao']; ?>">
-
-    <button type="submit">Atualizar</button>
-</form>
-
-<br>
-<a href="dashboard.php">⬅ Voltar</a>
 </div>
 
-</body>
-</html>
+<?php
+$content = ob_get_clean();
+include "layout.php";
+?>

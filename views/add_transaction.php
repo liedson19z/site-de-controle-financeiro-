@@ -5,78 +5,48 @@ if (!isset($_SESSION['user_id'])) {
     header("Location: /site/views/login.php");
     exit;
 }
+
+ob_start();
 ?>
-
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Nova Transação</title>
-
-    <style>
-        body {
-            font-family: Arial;
-            background: #121212;
-            color: white;
-            margin: 0;
-            padding: 20px;
-        }
-
-        .container {
-            max-width: 400px;
-            margin: auto;
-            background: #1e1e1e;
-            padding: 20px;
-            border-radius: 10px;
-        }
-
-        input, select {
-            width: 100%;
-            padding: 10px;
-            margin-bottom: 15px;
-            border: none;
-            border-radius: 5px;
-        }
-
-        button {
-            width: 100%;
-            padding: 10px;
-            background: #00c3ff;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-
-        a {
-            color: #00c3ff;
-            text-decoration: none;
-        }
-    </style>
-</head>
-<body>
 
 <h2>Nova Transação</h2>
 
-<div class="container">
+<div style="background:#1e1e1e; padding:20px; border-radius:12px; max-width:400px;">
+
 <form method="POST" action="/site/controllers/transactionController.php">
-    
-    <select name="tipo" required>
-        <option value="">Tipo</option>
+
+    <label>Tipo</label><br>
+    <select name="tipo" style="width:100%; padding:8px;">
         <option value="entrada">Entrada</option>
         <option value="saida">Saída</option>
     </select>
 
-    <input type="number" step="0.01" name="valor" placeholder="Valor" required>
+    <br><br>
 
-    <input type="text" name="categoria" placeholder="Categoria">
+    <label>Valor</label><br>
+    <input type="number" name="valor" style="width:100%; padding:8px;">
 
-    <input type="text" name="descricao" placeholder="Descrição">
+    <br><br>
 
-    <button type="submit">Salvar</button>
+    <label>Categoria</label><br>
+    <input type="text" name="categoria" style="width:100%; padding:8px;">
+
+    <br><br>
+
+    <label>Descrição</label><br>
+    <input type="text" name="descricao" style="width:100%; padding:8px;">
+
+    <br><br>
+
+    <button type="submit" style="width:100%; padding:10px; background:#00c3ff; border:none;">
+        Salvar
+    </button>
+
 </form>
 
-<br>
-<a href="dashboard.php">⬅ Voltar</a>
 </div>
 
-</body>
-</html>
+<?php
+$content = ob_get_clean();
+include "layout.php";
+?>

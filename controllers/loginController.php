@@ -1,35 +1,27 @@
 <?php
-error_reporting(E_ALL);
-ini_set("display_errors", 1);
-
 session_start();
-
 require_once "../config/database.php";
 
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
+$db = new Database();
+$conn = $db->connect();
 
-    $email = $_POST['email'];
-    $senha = $_POST['senha'];
+$email = $_POST['email'] ?? '';
+$password = $_POST['password'] ?? '';
 
-    $database = new Database();
-    $conn = $database->connect();
+$stmt = $conn->prepare("SELECT * FROM users WHERE email = :email");
+$stmt->bindParam(":email", $email);
+$stmt->execute();
 
-    $sql = "SELECT * FROM users WHERE email = :email";
-    $stmt = $conn->prepare($sql);
-    $stmt->bindParam(":email", $email);
-    $stmt->execute();
+$user = $stmt->fetch(PDO::FETCH_ASSOC);
 
-    $user = $stmt->fetch(PDO::FETCH_ASSOC);
+if ($user && password_verify($password, $user['senha'])) {
 
-    if ($user && password_verify($senha, $user['senha'])) {
+    $_SESSION['user_id'] = $user['id'];
+    $_SESSION['nome'] = $user['nome'];
 
-        $_SESSION['user_id'] = $user['id'];
-        $_SESSION['nome'] = $user['nome'];
-
-        header("Location: /site/views/dashboard.php");
-        exit;
-
-    } else {
-        echo "Email ou senha incorretos!";
-    }
+    header("Location: /site/views/dashboard.php");
+    exit;
 }
+
+header("Location: /site/views/login.php");
+exit;

@@ -1,6 +1,5 @@
 <?php
 session_start();
-
 require_once "../config/database.php";
 
 if (!isset($_SESSION['user_id'])) {
@@ -8,24 +7,15 @@ if (!isset($_SESSION['user_id'])) {
     exit;
 }
 
-if (isset($_GET['id'])) {
+$db = new Database();
+$conn = $db->connect();
 
-    $id = $_GET['id'];
-    $user_id = $_SESSION['user_id'];
+$id = $_GET['id'];
 
-    $database = new Database();
-    $conn = $database->connect();
+$sql = "DELETE FROM transactions WHERE id = :id";
+$stmt = $conn->prepare($sql);
+$stmt->bindParam(":id", $id);
+$stmt->execute();
 
-    $sql = "DELETE FROM transactions WHERE id = :id AND user_id = :user_id";
-    $stmt = $conn->prepare($sql);
-
-    $stmt->bindParam(":id", $id);
-    $stmt->bindParam(":user_id", $user_id);
-
-    if ($stmt->execute()) {
-        header("Location: /site/views/dashboard.php");
-        exit;
-    } else {
-        echo "Erro ao excluir";
-    }
-}
+header("Location: /site/views/dashboard.php");
+exit;
